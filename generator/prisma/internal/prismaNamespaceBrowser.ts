@@ -53,7 +53,15 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   User: 'User',
   Post: 'Post',
-  Vote: 'Vote'
+  Vote: 'Vote',
+  Project: 'Project',
+  Screenshot: 'Screenshot',
+  ProjectTag: 'ProjectTag',
+  Vote_Project: 'Vote_Project',
+  Comment: 'Comment',
+  Follow: 'Follow',
+  Notification: 'Notification',
+  AiAnalysis: 'AiAnalysis'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -105,6 +113,99 @@ export const VoteScalarFieldEnum = {
 } as const
 
 export type VoteScalarFieldEnum = (typeof VoteScalarFieldEnum)[keyof typeof VoteScalarFieldEnum]
+
+
+export const ProjectScalarFieldEnum = {
+  id: 'id',
+  clerkUserId: 'clerkUserId',
+  title: 'title',
+  slug: 'slug',
+  description: 'description',
+  demoUrl: 'demoUrl',
+  repoUrl: 'repoUrl',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
+
+
+export const ScreenshotScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  url: 'url',
+  order: 'order'
+} as const
+
+export type ScreenshotScalarFieldEnum = (typeof ScreenshotScalarFieldEnum)[keyof typeof ScreenshotScalarFieldEnum]
+
+
+export const ProjectTagScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  name: 'name'
+} as const
+
+export type ProjectTagScalarFieldEnum = (typeof ProjectTagScalarFieldEnum)[keyof typeof ProjectTagScalarFieldEnum]
+
+
+export const Vote_ProjectScalarFieldEnum = {
+  id: 'id',
+  clerkUserId: 'clerkUserId',
+  projectId: 'projectId',
+  value: 'value',
+  createdAt: 'createdAt'
+} as const
+
+export type Vote_ProjectScalarFieldEnum = (typeof Vote_ProjectScalarFieldEnum)[keyof typeof Vote_ProjectScalarFieldEnum]
+
+
+export const CommentScalarFieldEnum = {
+  id: 'id',
+  clerkUserId: 'clerkUserId',
+  projectId: 'projectId',
+  body: 'body',
+  type: 'type',
+  createdAt: 'createdAt'
+} as const
+
+export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
+
+
+export const FollowScalarFieldEnum = {
+  followerId: 'followerId',
+  followingId: 'followingId',
+  createdAt: 'createdAt'
+} as const
+
+export type FollowScalarFieldEnum = (typeof FollowScalarFieldEnum)[keyof typeof FollowScalarFieldEnum]
+
+
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  clerkUserId: 'clerkUserId',
+  type: 'type',
+  message: 'message',
+  read: 'read',
+  projectId: 'projectId',
+  createdAt: 'createdAt'
+} as const
+
+export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const AiAnalysisScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  sentiment: 'sentiment',
+  topIssues: 'topIssues',
+  featureRequests: 'featureRequests',
+  summary: 'summary',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AiAnalysisScalarFieldEnum = (typeof AiAnalysisScalarFieldEnum)[keyof typeof AiAnalysisScalarFieldEnum]
 
 
 export const SortOrder = {

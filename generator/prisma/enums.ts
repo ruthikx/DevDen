@@ -25,3 +25,20 @@ export const PostStatus = {
 } as const
 
 export type PostStatus = (typeof PostStatus)[keyof typeof PostStatus]
+
+
+export const ProjectStatus = {
+  ACTIVE: 'ACTIVE',
+  ARCHIVED: 'ARCHIVED'
+} as const
+
+export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus]
+
+
+export const CommentType = {
+  GENERAL: 'GENERAL',
+  FEATURE_REQUEST: 'FEATURE_REQUEST',
+  BUG_REPORT: 'BUG_REPORT'
+} as const
+
+export type CommentType = (typeof CommentType)[keyof typeof CommentType]

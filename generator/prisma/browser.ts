@@ -32,3 +32,43 @@ export type Post = Prisma.PostModel
  * 
  */
 export type Vote = Prisma.VoteModel
+/**
+ * Model Project
+ * 
+ */
+export type Project = Prisma.ProjectModel
+/**
+ * Model Screenshot
+ * 
+ */
+export type Screenshot = Prisma.ScreenshotModel
+/**
+ * Model ProjectTag
+ * 
+ */
+export type ProjectTag = Prisma.ProjectTagModel
+/**
+ * Model Vote_Project
+ * 
+ */
+export type Vote_Project = Prisma.Vote_ProjectModel
+/**
+ * Model Comment
+ * 
+ */
+export type Comment = Prisma.CommentModel
+/**
+ * Model Follow
+ * 
+ */
+export type Follow = Prisma.FollowModel
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel
+/**
+ * Model AiAnalysis
+ * 
+ */
+export type AiAnalysis = Prisma.AiAnalysisModel

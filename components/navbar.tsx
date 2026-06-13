@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Map, MessageSquare, Shield, Sparkles } from "lucide-react";
+import { Map, MessageSquare, Shield, Sparkles, Zap } from "lucide-react";
 import ThemeToggle from "./theme-toggle";
 import { Show, SignInButton, SignOutButton, UserButton } from "@clerk/nextjs";
 import { Button } from "./ui/button";
@@ -20,6 +20,10 @@ export default function Navbar() {
                             <span className="text-xl font-bold">Feedback Fusion</span>
                         </div>
                     </Link>
+                    <Link href="/projects" className="text-sm hover:text-primary flex items-center gap-1">
+                        <Zap className="h-4 w-4" />
+                        Discover
+                    </Link>
                     <Link href="/roadmap" className="text-sm hover:text-primary flex items-center gap-1">
                         <Map className="h-4 w-4" />
                         Roadmap
@@ -27,6 +31,10 @@ export default function Navbar() {
                     <Link href="/feedback" className="text-sm hover:text-primary flex items-center gap-1">
                         <MessageSquare className="h-4 w-4" />
                         Feedback
+                    </Link>
+                    <Link href="/projects/new" className="text-sm hover:text-primary flex items-center gap-1">
+                        <Sparkles className="h-4 w-4" />
+                        Submit Project
                     </Link>
                     {/* Admin Link */}
                     <Show when="signed-in">
