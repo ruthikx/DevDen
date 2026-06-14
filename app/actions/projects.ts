@@ -6,8 +6,8 @@ import { generateSlug } from '@/lib/slug-helper';
 import { revalidatePath } from 'next/cache';
 import { calculatePulseScore } from '@/lib/pulse-score';
 
-function parseList(value: string) {
-  return value
+function parseList(value: string | null) {
+  return (value || '')
     .split(',')
     .map((item) => item.trim())
     .filter(Boolean);
@@ -26,8 +26,8 @@ function projectPulseScore(project: {
 }
 
 export async function createProject(
-  title: string,
-  description: string,
+  title: string | null,
+  description: string | null,
   demoUrl: string | null,
   repoUrl: string | null,
   tagsString: string,
@@ -44,7 +44,7 @@ export async function createProject(
     }
 
     // Validate inputs
-    if (!title.trim() || !description.trim()) {
+    if (!title?.trim() || !description?.trim()) {
       throw new Error('Title and description are required');
     }
 

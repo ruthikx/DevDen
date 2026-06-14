@@ -3,84 +3,90 @@
 import { useActionState, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { BadgeCheck, Code2, Eye, Image as ImageIcon, Link2, Rocket, Sparkles } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Award,
+  BadgeCheck,
+  Check,
+  CloudUpload,
+  Globe,
+  Loader2,
+  Rocket,
+  Shield,
+  Sparkles,
+  Terminal,
+} from 'lucide-react';
 import { createProject } from '@/app/actions/projects';
-import { WizardStep } from '@/components/WizardStep';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Progress } from '@/components/ui/progress';
-import { Textarea } from '@/components/ui/textarea';
 
 type CreateProjectState = Awaited<ReturnType<typeof createProject>> | null;
 
-const steps = [
-  { label: 'Identity', icon: BadgeCheck },
-  { label: 'Showcase', icon: ImageIcon },
-  { label: 'Stack', icon: Code2 },
-  { label: 'Review', icon: Eye },
-];
+const steps = ['Identity', 'Showcase', 'Connect'];
 
 const requiredFields: Record<number, string[]> = {
-  0: ['title', 'tagline', 'version', 'description'],
+  0: ['title', 'description'],
   1: [],
-  2: ['tags'],
-  3: [],
+  2: [],
 };
 
 function formValue(form: HTMLFormElement | null, name: string) {
   if (!form) return '';
   const field = form.elements.namedItem(name);
-  return field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement ? field.value.trim() : '';
+  return field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement
+    ? field.value.trim()
+    : '';
 }
 
 export function ProjectWizard() {
   const router = useRouter();
-  const [step, setStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(0);
   const [formEl, setFormEl] = useState<HTMLFormElement | null>(null);
 
-  const [, formAction, isPending] = useActionState<CreateProjectState, FormData>(async (_prevState, formData) => {
-    const title = formData.get('title') as string;
-    const tagline = formData.get('tagline') as string;
-    const version = formData.get('version') as string;
-    const description = formData.get('description') as string;
-    const demoUrl = formData.get('demoUrl') as string;
-    const repoUrl = formData.get('repoUrl') as string;
-    const tags = formData.get('tags') as string;
-    const languages = formData.get('languages') as string;
-    const frameworks = formData.get('frameworks') as string;
-    const screenshots = formData.get('screenshots') as string;
+  const [, formAction, isPending] = useActionState<CreateProjectState, FormData>(
+    async (_prevState, formData) => {
+      const title = formData.get('title') as string;
+      const tagline = formData.get('tagline') as string;
+      const version = formData.get('version') as string;
+      const description = formData.get('description') as string;
+      const demoUrl = formData.get('demoUrl') as string;
+      const repoUrl = formData.get('repoUrl') as string;
+      const tags = formData.get('tags') as string;
+      const languages = formData.get('languages') as string;
+      const frameworks = formData.get('frameworks') as string;
+      const screenshots = formData.get('screenshots') as string;
 
-    const loadingToast = toast.loading('Initializing launch...');
-    const result = await createProject(
-      title,
-      description,
-      demoUrl || null,
-      repoUrl || null,
-      tags,
-      screenshots,
-      tagline,
-      version,
-      languages,
-      frameworks
-    );
+      const loadingToast = toast.loading('Initializing launch...');
+      const result = await createProject(
+        title,
+        description,
+        demoUrl || null,
+        repoUrl || null,
+        tags,
+        screenshots,
+        tagline,
+        version,
+        languages,
+        frameworks,
+      );
 
-    toast.dismiss(loadingToast);
+      toast.dismiss(loadingToast);
 
-    if (result.success && result.project) {
-      toast.success('Project launched on DevPulse.');
-      router.push(`/projects/${result.project.slug}`);
-    } else {
-      toast.error(result.error || 'Failed to create project');
-    }
+      if (result.success && result.project) {
+        toast.success('Project launched on DevPulse.');
+        router.push(`/projects/${result.project.slug}`);
+      } else {
+        toast.error(result.error || 'Failed to create project');
+      }
 
-    return result;
-  }, null);
+      return result;
+    },
+    null,
+  );
 
-  const progress = useMemo(() => ((step + 1) / steps.length) * 100, [step]);
+  const progress = useMemo(() => ((currentStep + 1) / steps.length) * 100, [currentStep]);
 
   function canAdvance() {
-    const missing = requiredFields[step].filter((field) => !formValue(formEl, field));
+    const missing = requiredFields[currentStep].filter((field) => !formValue(formEl, field));
     if (missing.length > 0) {
       toast.error('Complete the highlighted launch fields before continuing.');
       return false;
@@ -89,143 +95,260 @@ export function ProjectWizard() {
   }
 
   function goNext() {
-    if (canAdvance()) setStep((current) => Math.min(current + 1, steps.length - 1));
+    if (canAdvance()) setCurrentStep((s) => Math.min(s + 1, steps.length - 1));
   }
 
-  const reviewFields = [
-    ['Title', formValue(formEl, 'title')],
-    ['Tagline', formValue(formEl, 'tagline')],
-    ['Version', formValue(formEl, 'version')],
-    ['Tags', formValue(formEl, 'tags')],
-    ['Languages', formValue(formEl, 'languages')],
-    ['Frameworks', formValue(formEl, 'frameworks')],
-  ];
-
   return (
-    <div className="neon-panel w-full max-w-4xl rounded-lg p-5">
-      <div className="mb-6 space-y-4">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="text-xs uppercase tracking-[0.24em] text-cyan-200">Project Launchpad</p>
-            <h2 className="mt-1 flex items-center gap-2 text-2xl font-semibold">
-              <Rocket className="h-6 w-6 text-[#ff007a]" />
-              Initialize Project
-            </h2>
-          </div>
-          <div className="text-sm text-zinc-400">Step {step + 1} of {steps.length}</div>
+    <>
+      <style>{`
+        .shimmer {
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+          background-size: 200% 100%;
+          animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+      `}</style>
+
+      <div className="glass-panel rounded-xl p-8 relative overflow-hidden">
+        <div className="shimmer absolute inset-0 pointer-events-none" />
+
+        <div className="mb-10 text-center relative">
+          <h1 className="font-bold text-3xl font-headline-lg text-headline-lg mb-2 text-primary">
+            Upload Your Project
+          </h1>
+          <p className="text-on-surface-variant font-body-md">
+            Bring your vision to the DevPulse ecosystem.
+          </p>
         </div>
-        <Progress value={progress} className="h-2 bg-white/10 [&_[data-slot=progress-indicator]]:bg-gradient-to-r [&_[data-slot=progress-indicator]]:from-[#ff007a] [&_[data-slot=progress-indicator]]:to-cyan-300" />
-        <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-          {steps.map(({ label, icon: Icon }, index) => (
-            <button
-              key={label}
-              type="button"
-              onClick={() => index <= step && setStep(index)}
-              className={`rounded-lg border p-3 text-left transition ${
-                index === step
-                  ? 'border-[#ff007a]/50 bg-[#ff007a]/15 text-white'
-                  : index < step
-                    ? 'border-cyan-300/25 bg-cyan-300/10 text-cyan-100'
-                    : 'border-white/10 bg-black/20 text-zinc-500'
-              }`}
-            >
-              <Icon className="mb-2 h-4 w-4" />
-              <span className="text-sm font-medium">{label}</span>
-            </button>
+
+        <div className="flex justify-between items-center mb-12 relative">
+          <div className="absolute top-1/2 left-0 w-full h-[2px] bg-white/10 -translate-y-1/2 z-0" />
+          <div
+            className="absolute top-1/2 left-0 h-[2px] bg-primary -translate-y-1/2 z-0 transition-all duration-500"
+            style={{ width: `${progress}%`, filter: 'drop-shadow(0 0 8px #ffb1c3)' }}
+          />
+          {steps.map((label, idx) => (
+            <div key={label} className="relative z-10 flex flex-col items-center gap-3">
+              <div
+                className={`flex h-10 w-10 items-center justify-center rounded-full border-4 border-background font-bold transition-all duration-300 ${
+                  idx <= currentStep
+                    ? 'bg-primary text-on-primary-container'
+                    : 'bg-surface-container-high text-on-surface-variant'
+                }`}
+              >
+                {idx < currentStep ? <Check className="h-4 w-4" /> : idx + 1}
+              </div>
+              <span
+                className={`font-label-caps text-[10px] uppercase tracking-widest ${
+                  idx <= currentStep ? 'text-primary' : 'text-on-surface-variant'
+                }`}
+              >
+                {label}
+              </span>
+            </div>
           ))}
         </div>
-      </div>
 
-      <form ref={setFormEl} action={formAction} className="space-y-5">
-        <div className={step === 0 ? 'block' : 'hidden'}>
-          <WizardStep title="Project Identity" description="Name the launch and frame the feedback you want from other builders.">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="title">Project Title *</Label>
-                <Input id="title" name="title" required disabled={isPending} placeholder="DevPulse Platform" className="border-white/10 bg-black/30" />
+        <form ref={setFormEl} action={formAction} className="flex min-h-[400px] flex-col space-y-8">
+          <div className={`flex-1 space-y-6 ${currentStep !== 0 ? 'hidden' : ''}`}>
+            <div className="group">
+              <label className="mb-2 block font-label-caps text-label-caps text-on-surface-variant transition-colors group-focus-within:text-primary">
+                Project Title
+              </label>
+              <input
+                name="title"
+                required
+                className="w-full border-0 border-b border-white/10 bg-white/5 px-0 py-3 font-headline-lg-mobile text-headline-lg-mobile text-on-surface outline-none transition-all placeholder:text-white/20 focus:border-primary focus:ring-0"
+                placeholder="e.g., Quantum Compiler 2.0"
+              />
+            </div>
+            <div className="group">
+              <label className="mb-2 block font-label-caps text-label-caps text-on-surface-variant transition-colors group-focus-within:text-primary">
+                Tagline
+              </label>
+              <input
+                name="tagline"
+                className="w-full border-0 border-b border-white/10 bg-white/5 px-0 py-3 font-body-md text-body-md text-on-surface outline-none transition-all placeholder:text-white/20 focus:border-primary focus:ring-0"
+                placeholder="A short punchy one-liner"
+              />
+            </div>
+            <div className="group">
+              <label className="mb-2 block font-label-caps text-label-caps text-on-surface-variant transition-colors group-focus-within:text-primary">
+                Project Description
+              </label>
+              <textarea
+                name="description"
+                required
+                rows={4}
+                className="w-full resize-none border-0 border-b border-white/10 bg-white/5 px-0 py-3 font-body-md text-body-md text-on-surface outline-none transition-all placeholder:text-white/20 focus:border-primary focus:ring-0"
+                placeholder="Explain the architecture and the problem it solves..."
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-6">
+              <div className="group">
+                <label className="mb-2 block font-label-caps text-label-caps text-on-surface-variant transition-colors group-focus-within:text-primary">
+                  Discovery Tags
+                </label>
+                <input
+                  name="tags"
+                  className="w-full border-0 border-b border-white/10 bg-white/5 px-0 py-3 text-on-surface outline-none transition-all placeholder:text-white/20 focus:border-primary focus:ring-0"
+                  placeholder="AI, Open Source, Analytics"
+                />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="version">Version *</Label>
-                <Input id="version" name="version" required disabled={isPending} placeholder="v1.0 beta" className="border-white/10 bg-black/30" />
+              <div className="group">
+                <label className="mb-2 block font-label-caps text-label-caps text-on-surface-variant transition-colors group-focus-within:text-primary">
+                  Version
+                </label>
+                <input
+                  name="version"
+                  className="w-full border-0 border-b border-white/10 bg-white/5 px-0 py-3 font-code-sm text-on-surface outline-none transition-all placeholder:text-white/20 focus:border-primary focus:ring-0"
+                  placeholder="v1.0.0"
+                />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="tagline">Tagline *</Label>
-              <Input id="tagline" name="tagline" required disabled={isPending} placeholder="A launch radar for ambitious developer projects" className="border-white/10 bg-black/30" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="description">Launch Brief *</Label>
-              <Textarea id="description" name="description" required disabled={isPending} placeholder="Describe the problem, technical approach, standout craft, and feedback needed..." className="min-h-36 resize-none border-white/10 bg-black/30" />
-            </div>
-          </WizardStep>
-        </div>
+          </div>
 
-        <div className={step === 1 ? 'block' : 'hidden'}>
-          <WizardStep title="Showcase" description="Add proof: product screenshots, live demo, and repository context.">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="demoUrl" className="flex items-center gap-2"><Link2 className="h-4 w-4 text-cyan-300" /> Demo URL</Label>
-                <Input id="demoUrl" name="demoUrl" type="url" disabled={isPending} placeholder="https://example.com" className="border-white/10 bg-black/30" />
+          <div className={`flex-1 space-y-8 ${currentStep !== 1 ? 'hidden' : ''}`}>
+            <div>
+              <label className="mb-4 block font-label-caps text-label-caps text-on-surface-variant">
+                Project Screenshots
+              </label>
+              <div className="group relative flex flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-white/10 p-8 transition-all hover:border-secondary-fixed-dim">
+                <div className="pointer-events-none absolute inset-0 bg-secondary-fixed-dim/5 opacity-0 transition-opacity group-hover:opacity-100" />
+                <CloudUpload className="mb-4 h-12 w-12 text-on-surface-variant transition-all group-hover:scale-110 group-hover:text-secondary-fixed-dim" />
+                <p className="text-center font-body-md text-on-surface-variant transition-colors group-hover:text-on-surface">
+                  Add screenshot URLs for your project
+                </p>
+                <p className="mt-2 text-center text-xs text-outline opacity-60">
+                  Paste comma-separated image URLs (screenshots, mockups, etc.)
+                </p>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="repoUrl" className="flex items-center gap-2"><Link2 className="h-4 w-4 text-[#ff007a]" /> Repository URL</Label>
-                <Input id="repoUrl" name="repoUrl" type="url" disabled={isPending} placeholder="https://github.com/user/repo" className="border-white/10 bg-black/30" />
+              <textarea
+                name="screenshots"
+                rows={2}
+                className="mt-4 w-full resize-none border-0 border-b border-white/10 bg-white/5 px-0 py-3 font-body-md text-body-md text-on-surface outline-none transition-all placeholder:text-white/20 focus:border-secondary-fixed-dim focus:ring-0"
+                placeholder="https://example.com/screen-a.png, https://example.com/screen-b.png"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-6">
+              <div className="group">
+                <label className="mb-2 block font-label-caps text-label-caps text-on-surface-variant transition-colors group-focus-within:text-secondary-fixed-dim">
+                  Languages
+                </label>
+                <input
+                  name="languages"
+                  className="w-full border-0 border-b border-white/10 bg-white/5 px-0 py-3 text-on-surface outline-none transition-all placeholder:text-white/20 focus:border-secondary-fixed-dim focus:ring-0"
+                  placeholder="TypeScript, Rust, Go"
+                />
+              </div>
+              <div className="group">
+                <label className="mb-2 block font-label-caps text-label-caps text-on-surface-variant transition-colors group-focus-within:text-secondary-fixed-dim">
+                  Frameworks
+                </label>
+                <input
+                  name="frameworks"
+                  className="w-full border-0 border-b border-white/10 bg-white/5 px-0 py-3 text-on-surface outline-none transition-all placeholder:text-white/20 focus:border-secondary-fixed-dim focus:ring-0"
+                  placeholder="Next.js, Tailwind, Prisma"
+                />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="screenshots">Screenshot URLs</Label>
-              <Textarea id="screenshots" name="screenshots" disabled={isPending} placeholder="https://example.com/screen-a.png, https://example.com/screen-b.png" className="min-h-28 resize-none border-white/10 bg-black/30" />
-            </div>
-          </WizardStep>
-        </div>
+          </div>
 
-        <div className={step === 2 ? 'block' : 'hidden'}>
-          <WizardStep title="Technical Stack" description="These signals power filtering, project cards, and the stack HUD.">
-            <div className="space-y-2">
-              <Label htmlFor="tags" className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-cyan-300" /> Discovery Tags *</Label>
-              <Input id="tags" name="tags" required disabled={isPending} placeholder="AI, Open Source, Analytics" className="border-white/10 bg-black/30" />
-            </div>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="languages">Languages</Label>
-                <Input id="languages" name="languages" disabled={isPending} placeholder="TypeScript, SQL" className="border-white/10 bg-black/30" />
+          <div className={`flex-1 space-y-6 ${currentStep !== 2 ? 'hidden' : ''}`}>
+            <div className="group">
+              <label className="mb-2 block font-label-caps text-label-caps text-on-surface-variant transition-colors group-focus-within:text-primary">
+                Source Code Repository
+              </label>
+              <div className="flex items-center gap-3 border-b border-white/10 bg-white/5 px-3">
+                <Terminal className="h-5 w-5 shrink-0 text-on-surface-variant" />
+                <input
+                  name="repoUrl"
+                  type="url"
+                  className="flex-1 border-0 bg-transparent py-4 text-body-md text-primary outline-none placeholder:text-white/20 focus:ring-0"
+                  placeholder="https://github.com/user/repo"
+                />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="frameworks">Frameworks</Label>
-                <Input id="frameworks" name="frameworks" disabled={isPending} placeholder="Next.js, Prisma, Tailwind" className="border-white/10 bg-black/30" />
+            </div>
+            <div className="group">
+              <label className="mb-2 block font-label-caps text-label-caps text-on-surface-variant transition-colors group-focus-within:text-secondary-fixed-dim">
+                Live Production URL
+              </label>
+              <div className="flex items-center gap-3 border-b border-white/10 bg-white/5 px-3">
+                <Globe className="h-5 w-5 shrink-0 text-on-surface-variant" />
+                <input
+                  name="demoUrl"
+                  type="url"
+                  className="flex-1 border-0 bg-transparent py-4 text-body-md text-secondary-fixed-dim outline-none placeholder:text-white/20 focus:ring-0"
+                  placeholder="https://yourproject.dev"
+                />
               </div>
             </div>
-          </WizardStep>
-        </div>
-
-        <div className={step === 3 ? 'block' : 'hidden'}>
-          <WizardStep title="Review & Submit" description="Confirm the public launch profile before it enters the trending feed.">
-            <div className="grid gap-3 md:grid-cols-2">
-              {reviewFields.map(([label, value]) => (
-                <div key={label} className="rounded-lg border border-white/10 bg-black/20 p-3">
-                  <p className="text-xs uppercase tracking-[0.2em] text-zinc-500">{label}</p>
-                  <p className="mt-1 min-h-5 text-sm text-zinc-200">{value || 'Not provided'}</p>
+            <div className="mt-8 rounded-lg border border-white/5 bg-surface-container-high p-6">
+              <div className="flex items-start gap-4">
+                <BadgeCheck className="mt-0.5 h-6 w-6 shrink-0 text-primary" />
+                <div>
+                  <h4 className="mb-1 text-[16px] font-headline-lg-mobile text-on-surface">
+                    Final Review
+                  </h4>
+                  <p className="text-sm text-on-surface-variant">
+                    By clicking 'Initialize Project', your code will be indexed and ranked by the
+                    DevPulse algorithm. Ensure your README is populated for better discovery.
+                  </p>
                 </div>
-              ))}
+              </div>
             </div>
-          </WizardStep>
-        </div>
+          </div>
 
-        <div className="flex items-center justify-between gap-3">
-          <Button type="button" variant="outline" disabled={step === 0 || isPending} onClick={() => setStep((current) => Math.max(current - 1, 0))} className="border-white/15 bg-white/5 text-zinc-100">
-            Back
-          </Button>
-          {step < steps.length - 1 ? (
-            <Button type="button" onClick={goNext} className="bg-[#ff007a] text-white hover:bg-[#e6006e]">
-              Continue
-            </Button>
-          ) : (
-            <Button type="submit" disabled={isPending} className="bg-[#ff007a] text-white shadow-[0_0_24px_rgba(255,0,122,0.35)] hover:bg-[#e6006e]">
-              {isPending ? 'Launching...' : 'Launch Project'}
-            </Button>
-          )}
-        </div>
-      </form>
-    </div>
+          <div className="flex items-center justify-between pt-10">
+            <button
+              type="button"
+              onClick={() => setCurrentStep((s) => Math.max(s - 1, 0))}
+              disabled={currentStep === 0 || isPending}
+              className={`flex items-center gap-2 px-6 py-3 font-label-caps text-label-caps text-on-surface-variant transition-colors hover:text-on-surface disabled:opacity-0 ${
+                currentStep === 0 ? 'invisible' : ''
+              }`}
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </button>
+            <div className="flex gap-4">
+              {currentStep < steps.length - 1 ? (
+                <button
+                  type="button"
+                  onClick={goNext}
+                  className="flex items-center gap-2 rounded-full bg-primary px-8 py-3 font-label-caps text-label-caps text-on-primary transition-all active:scale-95 hover:scale-105"
+                  style={{ boxShadow: '0 0 20px rgba(255, 177, 195, 0.4)' }}
+                >
+                  Continue
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={isPending}
+                  className="flex items-center gap-3 rounded-full bg-primary px-10 py-4 font-headline-lg-mobile text-[18px] text-on-primary transition-all active:scale-95 hover:scale-105 disabled:opacity-80"
+                  style={{ boxShadow: '0 0 20px rgba(255, 177, 195, 0.4)' }}
+                >
+                  {isPending ? (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      Initializing...
+                    </>
+                  ) : (
+                    <>
+                      Initialize Project
+                      <Rocket className="h-5 w-5" />
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+          </div>
+        </form>
+      </div>
+    </>
   );
 }

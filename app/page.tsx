@@ -15,54 +15,10 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
+import { getProjects, getTopDevelopers } from "@/app/actions/projects";
 
 const heroImage =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuBvl2IR0wD-pKAPMnZs6WSlnHlCkjig2lUHqyrbFzFlf23ZTR5TW-T1DsBjSTgSIGLspnJj8AQWM3TQ9hgsuM4m65knkTQsTAXm-JPTKHjWoA-s0Oz371jicdMWenH57vkMHLuAe6fv0B5Qq81tHY5_slP3SzXBFmk2wjjV6cmNE35Rrs7ihangqM4JVD1HQDuQXznmoqelKrIiKeCBPrIQ_FEfadBVbbd2EaK11ycuZesGxrl2ODX5HD7FCXXYnDwvGbO7elIHExTx";
-
-const featuredProjects = [
-  {
-    name: "Cyber-OS Kernel",
-    version: "[ V1.2.0 ]",
-    description:
-      "A high-performance Rust microkernel for edge devices with real-time scheduling, small memory footprints, and clean developer tooling.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuBe5Sq2psCh7ByiXWMWfQv6z5kQOVZEg-s6e9ide9ySMxjTWB5OEfQ6DtlxOYxOrpJGJt0iVMEZ5qn4HriEYSHQiNyZgz4vKk5fFi25b98leFryGaeEvQI6fKiTaXIYYqEgqjztwBB5bPLLCn21DS8j7peA9udSKIFZo9kIm7I_izyegdoAvUdrsfBWeQ1naV0QAoyha4FmQ79rZHkcIJarXJSghEn2UBvU_Yvd7Co4sIY6sRjS_AIZUc_wHHrC28wpjdyWBaI4A_Dl",
-    tags: ["Rust", "WASM"],
-    votes: "1.2k",
-    comments: "48",
-    views: "3.4k",
-    glow: "primary",
-  },
-  {
-    name: "NexusDB Engine",
-    version: "LIVE",
-    description:
-      "A distributed graph database focused on sub-millisecond query latency across regions, built with streaming replication at the core.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAgPHnfNovCMhAemVrsw4a_ypmK3o_1iTjU1sTbKUzPct3WBXlFARg-snZdFYVtiql6XofutOuZu9dr4S40fiFvABZhZBDc0fZIQ7xLm1gqnO-NKr28I5_MYKM9H76FKNx8u7yosBqFyF_tfmsfzKfAliE20AjGEDrAkkV7uKtPCIzcHMrHCJfoFNBNL5NGV7nUhS48YCBqTFKvmixlw1MCymazADSCptXlgOA2PkvnK_CbnnylGbCjHC5H_gwDcXfSmqhtp6Qowse_",
-    tags: ["Go", "gRPC"],
-    votes: "840",
-    comments: "12",
-    views: "1.8k",
-    glow: "secondary",
-  },
-];
-
-const wideProject = {
-  name: "Lumina UI Library",
-  description:
-    "A React component library designed around accessibility, glass surfaces, dense product workflows, and polished motion primitives.",
-  image:
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuDuQn-PS5sbbGV65-WrcJzStHrWprYJ-1yky9f-a3szrnR-rnxPhCTE5bSW5gffDbE9mgn0QhfMbSSYYpBUNyGYB95C_TrmqC7PUokulMuNcrN1IPv2G7Ex2TuR_1OFiY6HaZkPer1RAon7SNv0AKbfeBr3xQvhCICr7vxUvZkTYkl8gd6q04_ZhMB3pjszP63ElYlEJ9F8-s5T_tMOrzIvbiHfsUV41fXoygEYU3pDw6Jb4vrMYBQ20wrKczRyM9gZ_ml3tdy4hiGV",
-  tags: ["React", "TypeScript"],
-  author: "@aiden_dev",
-};
-
-const topDevs = [
-  ["01", "ShadowByte", "Arch Linux Legend", "2.4k", "text-[#ffb1c3]", "border-[#ffb1c3]/50"],
-  ["02", "VectorX", "WASM Evangelist", "1.9k", "text-[#00dbe9]", "border-[#00dbe9]/50"],
-  ["03", "PixelWizard", "Shaders Master", "1.5k", "text-zinc-300", "border-white/20"],
-];
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuC_w42S8VP7ToVf1XQIVnK0-IdrZmxoTWnbGEKIiOO2tgmgvUSgxR_02a5pbrA40pTuB8-qO95KfvkiPEcXnaPJtldi_QoJJzpANx1EcXY_p9xPHfxL6YtXdAlrTYzB98thrduBVU3Vtkbz1rE1N34aigsbje9AezgbhGEm_k4rXWQ2JIJR-elFd1xOcNB98dakooND285yqMHUCnY22o1zDbd1RBF9WPm3Hw31jyUOPqJb1audKdgkksYmwqGNG26lN3rL7Y5WaCTT";
 
 const sideNav = [
   ["Feed", Flame],
@@ -71,63 +27,109 @@ const sideNav = [
   ["Insights", Sparkles],
 ];
 
-function ProjectCard({ project }: { project: (typeof featuredProjects)[number] }) {
+function formatCount(n: number): string {
+  if (n >= 1000) return `${(n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, "")}k`;
+  return String(n);
+}
+
+function ProjectCard({
+  project,
+  glow,
+}: {
+  project: {
+    title: string;
+    description: string;
+    tags: { name: string }[];
+    voteCount: number;
+    commentCount: number;
+    views: number;
+    version?: string | null;
+    slug: string;
+    screenshots?: { url: string }[];
+  };
+  glow: "primary" | "secondary";
+}) {
   const glowClass =
-    project.glow === "secondary" ? "neon-glow-secondary" : "neon-glow-primary";
+    glow === "secondary" ? "neon-glow-secondary" : "neon-glow-primary";
+  const imageUrl = project.screenshots?.[0]?.url;
 
   return (
-    <article className={`glass-panel ${glowClass} rounded-lg p-4 transition-all duration-300`}>
-      <div
-        className="relative mb-4 h-48 overflow-hidden rounded-lg bg-cover bg-center"
-        role="img"
-        aria-label={`${project.name} preview`}
-        style={{ backgroundImage: `url(${project.image})` }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-        <div className="absolute right-2 top-2 rounded-full border border-white/10 bg-[#050505]/70 px-3 py-1 font-mono text-xs text-[#00dbe9] backdrop-blur-md">
-          {project.version}
+    <Link href={`/projects/${project.slug}`}>
+      <article className={`glass-panel ${glowClass} rounded-lg p-4 transition-all duration-300`}>
+        <div
+          className="relative mb-4 h-48 overflow-hidden rounded-lg bg-cover bg-center"
+          role="img"
+          aria-label={`${project.title} preview`}
+          style={imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined}
+        >
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          {project.version && (
+            <div className="absolute right-2 top-2 rounded-full border border-white/10 bg-[#050505]/70 px-3 py-1 font-mono text-xs text-[#00dbe9] backdrop-blur-md">
+              {project.version}
+            </div>
+          )}
         </div>
-      </div>
-      <h3 className="text-2xl font-semibold tracking-wide text-[#e5e2e1]">{project.name}</h3>
-      <p className="mt-2 min-h-16 text-sm leading-6 text-[#e5bcc4]">{project.description}</p>
-      <div className="mt-4 flex flex-wrap gap-2">
-        {project.tags.map((tag, index) => (
-          <span
-            key={tag}
-            className={`rounded border px-2 py-1 text-[10px] font-bold uppercase tracking-[0.15em] ${
-              index === 0
-                ? "border-[#00eefc]/30 bg-[#00eefc]/10 text-[#00dbe9]"
-                : "border-[#ff4b89]/30 bg-[#ff4b89]/10 text-[#ffb1c3]"
-            }`}
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-      <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-4 text-sm text-[#e5bcc4]">
-        <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-1 font-mono text-[#e5e2e1]">
-            <ChevronUp className="h-4 w-4 text-[#ffb1c3]" />
-            {project.votes}
-          </span>
-          <ChevronDown className="h-4 w-4 text-[#e5bcc4]" />
+        <h3 className="text-2xl font-semibold tracking-wide text-[#e5e2e1]">{project.title}</h3>
+        <p className="mt-2 min-h-16 text-sm leading-6 text-[#e5bcc4]">{project.description}</p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {project.tags.slice(0, 4).map((tag, index) => (
+            <span
+              key={tag.name}
+              className={`rounded border px-2 py-1 text-[10px] font-bold uppercase tracking-[0.15em] ${
+                index === 0
+                  ? "border-[#00eefc]/30 bg-[#00eefc]/10 text-[#00dbe9]"
+                  : "border-[#ff4b89]/30 bg-[#ff4b89]/10 text-[#ffb1c3]"
+              }`}
+            >
+              {tag.name}
+            </span>
+          ))}
         </div>
-        <div className="flex items-center gap-4">
-          <span className="inline-flex items-center gap-1">
-            <MessageSquare className="h-4 w-4" />
-            {project.comments}
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <Eye className="h-4 w-4" />
-            {project.views}
-          </span>
+        <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-4 text-sm text-[#e5bcc4]">
+          <div className="flex items-center gap-3">
+            <span className="inline-flex items-center gap-1 font-mono text-[#e5e2e1]">
+              <ChevronUp className="h-4 w-4 text-[#ffb1c3]" />
+              {formatCount(project.voteCount)}
+            </span>
+            <ChevronDown className="h-4 w-4 text-[#e5bcc4]" />
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="inline-flex items-center gap-1">
+              <MessageSquare className="h-4 w-4" />
+              {formatCount(project.commentCount)}
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <Eye className="h-4 w-4" />
+              {formatCount(project.views)}
+            </span>
+          </div>
         </div>
-      </div>
-    </article>
+      </article>
+    </Link>
   );
 }
 
-export default function HomePage() {
+const devColors = [
+  { color: "text-[#ffb1c3]", border: "border-[#ffb1c3]/50" },
+  { color: "text-[#00dbe9]", border: "border-[#00dbe9]/50" },
+  { color: "text-zinc-300", border: "border-white/20" },
+];
+
+export default async function HomePage() {
+  const [projectsResult, devsResult] = await Promise.all([
+    getProjects(undefined, "trending", 1),
+    getTopDevelopers(3),
+  ]);
+
+  const projects = (projectsResult.projects || []).slice(0, 3);
+  const developers = devsResult.developers || [];
+
+  const featured = projects[0];
+  const featured2 = projects[1];
+  const featuredWide = projects[2];
+
+  const totalProjects = projectsResult.total ?? 0;
+
   return (
     <div className="min-h-screen overflow-hidden bg-[#050505] pb-10 text-[#e5e2e1]">
       <div className="absolute inset-x-0 top-16 h-[34rem] bg-[radial-gradient(circle_at_16%_14%,rgba(255,177,195,0.18),transparent_28rem),radial-gradient(circle_at_86%_16%,rgba(0,219,233,0.16),transparent_26rem)]" />
@@ -196,7 +198,7 @@ export default function HomePage() {
             </div>
 
             <div className="absolute right-6 top-10 z-10 hidden space-y-4 xl:block">
-              {["100% Authenticity", "50000+ Creators", "5k+ Projects Stored"].map((badge, index) => (
+              {["100% Authenticity", "50000+ Creators", `5k+ Projects Stored`].map((badge, index) => (
                 <div
                   key={badge}
                   className={`glass-panel rounded-lg px-4 py-2 text-xs font-bold uppercase tracking-[0.15em] text-[#e5e2e1] ${
@@ -225,107 +227,128 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <div className="space-y-6 lg:col-span-2">
-              <div className="grid gap-6 md:grid-cols-2">
-                {featuredProjects.map((project) => (
-                  <ProjectCard key={project.name} project={project} />
-                ))}
+          {projects.length > 0 ? (
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+              <div className="space-y-6 lg:col-span-2">
+                <div className="grid gap-6 md:grid-cols-2">
+                  {featured && (
+                    <ProjectCard project={featured} glow="primary" />
+                  )}
+                  {featured2 && (
+                    <ProjectCard project={featured2} glow="secondary" />
+                  )}
+                </div>
+
+                {featuredWide && (
+                  <article className="glass-panel neon-glow-primary flex flex-col gap-6 rounded-lg p-4 transition-all duration-300 md:flex-row">
+                    <div
+                      className="h-56 rounded-lg bg-cover bg-center md:h-auto md:w-1/3"
+                      role="img"
+                      aria-label={`${featuredWide.title} preview`}
+                      style={featuredWide.screenshots?.[0]?.url ? { backgroundImage: `url(${featuredWide.screenshots[0].url})` } : undefined}
+                    />
+                    <div className="flex min-w-0 flex-1 flex-col justify-between">
+                      <div>
+                        <h3 className="text-2xl font-semibold tracking-wide">{featuredWide.title}</h3>
+                        <p className="mt-2 text-sm leading-6 text-[#e5bcc4]">{featuredWide.description}</p>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {featuredWide.tags.map((tag) => (
+                            <span key={tag.name} className="rounded border border-[#ff4b89]/30 bg-[#ff4b89]/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-[#ffb1c3]">
+                              {tag.name}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="mt-6">
+                        <Button asChild className="border border-[#ffb1c3]/20 bg-[#ffb1c3]/10 text-[#ffb1c3] hover:bg-[#ffb1c3] hover:text-[#66002c]">
+                          <Link href={`/projects/${featuredWide.slug}`}>View Details</Link>
+                        </Button>
+                      </div>
+                    </div>
+                  </article>
+                )}
               </div>
 
-              <article className="glass-panel neon-glow-primary flex flex-col gap-6 rounded-lg p-4 transition-all duration-300 md:flex-row">
-                <div
-                  className="h-56 rounded-lg bg-cover bg-center md:h-auto md:w-1/3"
-                  role="img"
-                  aria-label={`${wideProject.name} preview`}
-                  style={{ backgroundImage: `url(${wideProject.image})` }}
-                />
-                <div className="flex min-w-0 flex-1 flex-col justify-between">
-                  <div>
-                    <h3 className="text-2xl font-semibold tracking-wide">{wideProject.name}</h3>
-                    <p className="mt-2 text-sm leading-6 text-[#e5bcc4]">{wideProject.description}</p>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {wideProject.tags.map((tag) => (
-                        <span key={tag} className="rounded border border-[#ff4b89]/30 bg-[#ff4b89]/10 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-[#ffb1c3]">
-                          {tag}
-                        </span>
+              <aside className="space-y-6">
+                <section className="glass-panel rounded-lg border-[#ffb1c3]/20 p-5">
+                  <div className="mb-6 flex items-center justify-between">
+                    <h3 className="flex items-center gap-2 text-2xl font-semibold">
+                      <Trophy className="h-5 w-5 text-[#ffb1c3]" />
+                      Top Devs
+                    </h3>
+                    <span className="font-mono text-xs text-[#e5bcc4]">Weekly</span>
+                  </div>
+                  {developers.length > 0 ? (
+                    <div className="space-y-3">
+                      {developers.map((dev, index) => {
+                        const dc = devColors[index] ?? devColors[devColors.length - 1];
+                        return (
+                          <div key={dev.clerkUserId} className="group flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-white/[0.05]">
+                            <div className="flex min-w-0 items-center gap-4">
+                              <span className={`font-mono text-xs ${dc.color}`}>
+                                {String(index + 1).padStart(2, "0")}
+                              </span>
+                              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border ${dc.border} bg-white/[0.04] text-xs font-bold`}>
+                                {dev.name.slice(0, 2).toUpperCase()}
+                              </div>
+                              <div className="min-w-0">
+                                <p className="truncate text-xs font-bold uppercase tracking-[0.15em] transition-colors group-hover:text-[#ffb1c3]">
+                                  {dev.name}
+                                </p>
+                                <p className="truncate text-[10px] text-[#e5bcc4]">
+                                  {dev.projectCount} project{dev.projectCount > 1 ? "s" : ""}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className={`font-mono text-xs ${dc.color}`}>{formatCount(dev.pulseScore)}</p>
+                              <p className="text-[9px] uppercase tracking-[0.15em] text-[#e5bcc4]">
+                                Reputation
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-[#e5bcc4]">No developers yet.</p>
+                  )}
+                  <Button asChild variant="outline" className="mt-6 w-full border-white/10 bg-transparent text-[#e5bcc4] hover:border-[#ffb1c3]/50 hover:text-[#ffb1c3]">
+                    <Link href="/leaderboards">Full Leaderboard</Link>
+                  </Button>
+                </section>
+
+                <section className="glass-panel relative overflow-hidden rounded-lg p-6 text-center">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(181,110,255,0.22),transparent_14rem)]" />
+                  <div className="relative">
+                    <h4 className="text-3xl font-bold text-[#ffb1c3]">{formatCount(totalProjects)}</h4>
+                    <p className="mt-2 text-xs font-bold uppercase tracking-[0.2em] text-[#e5bcc4]">
+                      Projects Stored
+                    </p>
+                    <div className="mt-5 flex justify-center -space-x-2">
+                      {developers.slice(0, 3).map((dev) => (
+                        <div key={dev.clerkUserId} className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[#050505] bg-[#353534] text-[10px] font-bold text-[#e5e2e1]">
+                          {dev.name.slice(0, 2).toUpperCase()}
+                        </div>
                       ))}
-                    </div>
-                  </div>
-                  <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-[#353534] text-xs font-bold text-[#00dbe9]">
-                        AD
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[#050505] bg-[#ffb1c3] text-[10px] font-bold text-[#66002c]">
+                        +{formatCount(Math.max(0, developers.length - 3))}
                       </div>
-                      <span className="text-sm font-bold tracking-wide">{wideProject.author}</span>
                     </div>
-                    <Button asChild className="border border-[#ffb1c3]/20 bg-[#ffb1c3]/10 text-[#ffb1c3] hover:bg-[#ffb1c3] hover:text-[#66002c]">
-                      <Link href="/projects">View Details</Link>
-                    </Button>
                   </div>
-                </div>
-              </article>
+                </section>
+              </aside>
             </div>
-
-            <aside className="space-y-6">
-              <section className="glass-panel rounded-lg border-[#ffb1c3]/20 p-5">
-                <div className="mb-6 flex items-center justify-between">
-                  <h3 className="flex items-center gap-2 text-2xl font-semibold">
-                    <Trophy className="h-5 w-5 text-[#ffb1c3]" />
-                    Top Devs
-                  </h3>
-                  <span className="font-mono text-xs text-[#e5bcc4]">Weekly</span>
-                </div>
-                <div className="space-y-3">
-                  {topDevs.map(([rank, name, title, reputation, color, border]) => (
-                    <div key={name} className="group flex items-center justify-between rounded-lg p-3 transition-colors hover:bg-white/[0.05]">
-                      <div className="flex min-w-0 items-center gap-4">
-                        <span className={`font-mono text-xs ${color}`}>{rank}</span>
-                        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border ${border} bg-white/[0.04] text-xs font-bold`}>
-                          {name.slice(0, 2).toUpperCase()}
-                        </div>
-                        <div className="min-w-0">
-                          <p className="truncate text-xs font-bold uppercase tracking-[0.15em] transition-colors group-hover:text-[#ffb1c3]">
-                            {name}
-                          </p>
-                          <p className="truncate text-[10px] text-[#e5bcc4]">{title}</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className={`font-mono text-xs ${color}`}>{reputation}</p>
-                        <p className="text-[9px] uppercase tracking-[0.15em] text-[#e5bcc4]">
-                          Reputation
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <Button asChild variant="outline" className="mt-6 w-full border-white/10 bg-transparent text-[#e5bcc4] hover:border-[#ffb1c3]/50 hover:text-[#ffb1c3]">
-                  <Link href="/leaderboards">Full Leaderboard</Link>
-                </Button>
-              </section>
-
-              <section className="glass-panel relative overflow-hidden rounded-lg p-6 text-center">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(181,110,255,0.22),transparent_14rem)]" />
-                <div className="relative">
-                  <h4 className="text-3xl font-bold text-[#ffb1c3]">1.2 Million</h4>
-                  <p className="mt-2 text-xs font-bold uppercase tracking-[0.2em] text-[#e5bcc4]">
-                    Builders Online
-                  </p>
-                  <div className="mt-5 flex justify-center -space-x-2">
-                    {["AI", "VX", "PW"].map((initials) => (
-                      <div key={initials} className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[#050505] bg-[#353534] text-[10px] font-bold text-[#e5e2e1]">
-                        {initials}
-                      </div>
-                    ))}
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-[#050505] bg-[#ffb1c3] text-[10px] font-bold text-[#66002c]">
-                      +5k
-                    </div>
-                  </div>
-                </div>
-              </section>
-            </aside>
-          </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center rounded-lg border border-white/10 py-20">
+              <Code2 className="mb-4 h-12 w-12 text-[#e5bcc4]" />
+              <h3 className="text-xl font-semibold text-[#e5e2e1]">No projects yet</h3>
+              <p className="mt-2 text-sm text-[#e5bcc4]">Be the first to create a project!</p>
+              <Button asChild className="mt-6 bg-[#ffb1c3] px-7 text-[#66002c] hover:bg-[#ffd9e0]">
+                <Link href="/projects/new">Create Project</Link>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

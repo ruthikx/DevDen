@@ -7,9 +7,9 @@ export default function Footer() {
             <div className="container mx-auto px-4 py-5">
                 <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <span>Code meets craft on</span>
+                        <span>Built with</span>
                         <HeartPulse className="h-4 w-4 text-[#ff007a]" />
-                        <span>DevPulse</span>
+                        <span>by Ruthik</span>
                     </div>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <span>Copyright {currentYear} DevPulse. All rights reserved.</span>
