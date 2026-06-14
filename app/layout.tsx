@@ -1,19 +1,17 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Inter } from "next/font/google";
-import { cn } from "@/lib/utils";
+import { Sora } from "next/font/google";
 import { Toaster } from "sonner";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { ClerkProvider } from '@clerk/nextjs'
 import { ThemeProvider } from "@/components/theme-provider";
-import { syncCurrentUser } from "@/lib/sync-user";
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+const sora = Sora({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
-  title: "Feedback Fusion - Public Roadmap",
-  description: "A platform where users to suggest and vote on features",
+  title: "DevPulse - Code Meets Craft",
+  description: "A neon social showcase for developers to launch projects, gather feedback, and climb leaderboards.",
 };
 
 export default async function RootLayout({
@@ -21,18 +19,17 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-    await syncCurrentUser();
   return (
     <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body className={`${inter.className} min-h-screen flex flex-col`}>
+      <html lang="en" className="dark" suppressHydrationWarning>
+        <body className={`${sora.className} min-h-screen flex flex-col`}>
           
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
             {/* {Navbar} */}
             <Navbar/>
             {
             /* {Main Section} */}
-            <main className="flex-1 container mx-auto px-4 py-8">{children}</main>
+            <main className="flex-1">{children}</main>
 
             {/* {Footer} */}
             <Footer />

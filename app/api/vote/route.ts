@@ -1,6 +1,5 @@
 import prisma from "@/lib/prisma";
 import { syncCurrentUser } from "@/lib/sync-user";
-import { error } from "console";
 import { NextRequest, NextResponse } from "next/server";
 
 

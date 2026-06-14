@@ -1,5 +1,4 @@
 import { currentUser } from "@clerk/nextjs/server";
-import { error } from "console";
 import prisma from "./prisma";
 
 export async function syncCurrentUser(){

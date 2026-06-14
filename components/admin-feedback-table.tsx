@@ -6,12 +6,20 @@ import { getCategoryDesign } from "@/app/data/category-data";
 import { Badge } from "./ui/badge";
 import { Edit, Save, ThumbsUp, User, X } from "lucide-react";
 import { STATUS_GROUPS, STATUS_ORDER } from "@/app/data/status-data";
-import { currentUser } from "@clerk/nextjs/server";
 import { Button } from "./ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { toast } from "sonner";
 
-export default function AdminFeedbackTable({posts}: {posts: any[]}) {
+type AdminPost = {
+    id: number;
+    title: string;
+    category: string;
+    status: string;
+    votes: { id: number }[];
+    author: { name: string | null };
+};
+
+export default function AdminFeedbackTable({posts}: {posts: AdminPost[]}) {
     const [editingPostId, setEditingPostId] = useState<number | null>(null);
     const [postStatus, setPostStatus] = useState<Record<number, string>>(
         Object.fromEntries(posts.map((post) => [post.id, post.status]))

@@ -20,8 +20,18 @@ export type ProjectModel = runtime.Types.Result.DefaultSelection<Prisma.$Project
 
 export type AggregateProject = {
   _count: ProjectCountAggregateOutputType | null
+  _avg: ProjectAvgAggregateOutputType | null
+  _sum: ProjectSumAggregateOutputType | null
   _min: ProjectMinAggregateOutputType | null
   _max: ProjectMaxAggregateOutputType | null
+}
+
+export type ProjectAvgAggregateOutputType = {
+  views: number | null
+}
+
+export type ProjectSumAggregateOutputType = {
+  views: number | null
 }
 
 export type ProjectMinAggregateOutputType = {
@@ -29,9 +39,12 @@ export type ProjectMinAggregateOutputType = {
   clerkUserId: string | null
   title: string | null
   slug: string | null
+  tagline: string | null
+  version: string | null
   description: string | null
   demoUrl: string | null
   repoUrl: string | null
+  views: number | null
   status: $Enums.ProjectStatus | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -42,9 +55,12 @@ export type ProjectMaxAggregateOutputType = {
   clerkUserId: string | null
   title: string | null
   slug: string | null
+  tagline: string | null
+  version: string | null
   description: string | null
   demoUrl: string | null
   repoUrl: string | null
+  views: number | null
   status: $Enums.ProjectStatus | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -55,9 +71,14 @@ export type ProjectCountAggregateOutputType = {
   clerkUserId: number
   title: number
   slug: number
+  tagline: number
+  version: number
   description: number
   demoUrl: number
   repoUrl: number
+  languages: number
+  frameworks: number
+  views: number
   status: number
   createdAt: number
   updatedAt: number
@@ -65,14 +86,25 @@ export type ProjectCountAggregateOutputType = {
 }
 
 
+export type ProjectAvgAggregateInputType = {
+  views?: true
+}
+
+export type ProjectSumAggregateInputType = {
+  views?: true
+}
+
 export type ProjectMinAggregateInputType = {
   id?: true
   clerkUserId?: true
   title?: true
   slug?: true
+  tagline?: true
+  version?: true
   description?: true
   demoUrl?: true
   repoUrl?: true
+  views?: true
   status?: true
   createdAt?: true
   updatedAt?: true
@@ -83,9 +115,12 @@ export type ProjectMaxAggregateInputType = {
   clerkUserId?: true
   title?: true
   slug?: true
+  tagline?: true
+  version?: true
   description?: true
   demoUrl?: true
   repoUrl?: true
+  views?: true
   status?: true
   createdAt?: true
   updatedAt?: true
@@ -96,9 +131,14 @@ export type ProjectCountAggregateInputType = {
   clerkUserId?: true
   title?: true
   slug?: true
+  tagline?: true
+  version?: true
   description?: true
   demoUrl?: true
   repoUrl?: true
+  languages?: true
+  frameworks?: true
+  views?: true
   status?: true
   createdAt?: true
   updatedAt?: true
@@ -143,6 +183,18 @@ export type ProjectAggregateArgs<ExtArgs extends runtime.Types.Extensions.Intern
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: ProjectAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: ProjectSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: ProjectMinAggregateInputType
@@ -173,6 +225,8 @@ export type ProjectGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   _count?: ProjectCountAggregateInputType | true
+  _avg?: ProjectAvgAggregateInputType
+  _sum?: ProjectSumAggregateInputType
   _min?: ProjectMinAggregateInputType
   _max?: ProjectMaxAggregateInputType
 }
@@ -182,13 +236,20 @@ export type ProjectGroupByOutputType = {
   clerkUserId: string
   title: string
   slug: string
+  tagline: string | null
+  version: string | null
   description: string
   demoUrl: string | null
   repoUrl: string | null
+  languages: string[]
+  frameworks: string[]
+  views: number
   status: $Enums.ProjectStatus
   createdAt: Date
   updatedAt: Date
   _count: ProjectCountAggregateOutputType | null
+  _avg: ProjectAvgAggregateOutputType | null
+  _sum: ProjectSumAggregateOutputType | null
   _min: ProjectMinAggregateOutputType | null
   _max: ProjectMaxAggregateOutputType | null
 }
@@ -216,9 +277,14 @@ export type ProjectWhereInput = {
   clerkUserId?: Prisma.StringFilter<"Project"> | string
   title?: Prisma.StringFilter<"Project"> | string
   slug?: Prisma.StringFilter<"Project"> | string
+  tagline?: Prisma.StringNullableFilter<"Project"> | string | null
+  version?: Prisma.StringNullableFilter<"Project"> | string | null
   description?: Prisma.StringFilter<"Project"> | string
   demoUrl?: Prisma.StringNullableFilter<"Project"> | string | null
   repoUrl?: Prisma.StringNullableFilter<"Project"> | string | null
+  languages?: Prisma.StringNullableListFilter<"Project">
+  frameworks?: Prisma.StringNullableListFilter<"Project">
+  views?: Prisma.IntFilter<"Project"> | number
   status?: Prisma.EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Project"> | Date | string
@@ -234,9 +300,14 @@ export type ProjectOrderByWithRelationInput = {
   clerkUserId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   slug?: Prisma.SortOrder
+  tagline?: Prisma.SortOrderInput | Prisma.SortOrder
+  version?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrder
   demoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   repoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  languages?: Prisma.SortOrder
+  frameworks?: Prisma.SortOrder
+  views?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -255,9 +326,14 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.ProjectWhereInput | Prisma.ProjectWhereInput[]
   clerkUserId?: Prisma.StringFilter<"Project"> | string
   title?: Prisma.StringFilter<"Project"> | string
+  tagline?: Prisma.StringNullableFilter<"Project"> | string | null
+  version?: Prisma.StringNullableFilter<"Project"> | string | null
   description?: Prisma.StringFilter<"Project"> | string
   demoUrl?: Prisma.StringNullableFilter<"Project"> | string | null
   repoUrl?: Prisma.StringNullableFilter<"Project"> | string | null
+  languages?: Prisma.StringNullableListFilter<"Project">
+  frameworks?: Prisma.StringNullableListFilter<"Project">
+  views?: Prisma.IntFilter<"Project"> | number
   status?: Prisma.EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Project"> | Date | string
@@ -273,15 +349,22 @@ export type ProjectOrderByWithAggregationInput = {
   clerkUserId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   slug?: Prisma.SortOrder
+  tagline?: Prisma.SortOrderInput | Prisma.SortOrder
+  version?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrder
   demoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   repoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  languages?: Prisma.SortOrder
+  frameworks?: Prisma.SortOrder
+  views?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ProjectCountOrderByAggregateInput
+  _avg?: Prisma.ProjectAvgOrderByAggregateInput
   _max?: Prisma.ProjectMaxOrderByAggregateInput
   _min?: Prisma.ProjectMinOrderByAggregateInput
+  _sum?: Prisma.ProjectSumOrderByAggregateInput
 }
 
 export type ProjectScalarWhereWithAggregatesInput = {
@@ -292,9 +375,14 @@ export type ProjectScalarWhereWithAggregatesInput = {
   clerkUserId?: Prisma.StringWithAggregatesFilter<"Project"> | string
   title?: Prisma.StringWithAggregatesFilter<"Project"> | string
   slug?: Prisma.StringWithAggregatesFilter<"Project"> | string
+  tagline?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
+  version?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
   description?: Prisma.StringWithAggregatesFilter<"Project"> | string
   demoUrl?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
   repoUrl?: Prisma.StringNullableWithAggregatesFilter<"Project"> | string | null
+  languages?: Prisma.StringNullableListFilter<"Project">
+  frameworks?: Prisma.StringNullableListFilter<"Project">
+  views?: Prisma.IntWithAggregatesFilter<"Project"> | number
   status?: Prisma.EnumProjectStatusWithAggregatesFilter<"Project"> | $Enums.ProjectStatus
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Project"> | Date | string
@@ -305,9 +393,14 @@ export type ProjectCreateInput = {
   clerkUserId: string
   title: string
   slug: string
+  tagline?: string | null
+  version?: string | null
   description: string
   demoUrl?: string | null
   repoUrl?: string | null
+  languages?: Prisma.ProjectCreatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectCreateframeworksInput | string[]
+  views?: number
   status?: $Enums.ProjectStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -323,9 +416,14 @@ export type ProjectUncheckedCreateInput = {
   clerkUserId: string
   title: string
   slug: string
+  tagline?: string | null
+  version?: string | null
   description: string
   demoUrl?: string | null
   repoUrl?: string | null
+  languages?: Prisma.ProjectCreatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectCreateframeworksInput | string[]
+  views?: number
   status?: $Enums.ProjectStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -341,9 +439,14 @@ export type ProjectUpdateInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  tagline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   demoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  languages?: Prisma.ProjectUpdatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectUpdateframeworksInput | string[]
+  views?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -359,9 +462,14 @@ export type ProjectUncheckedUpdateInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  tagline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   demoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  languages?: Prisma.ProjectUpdatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectUpdateframeworksInput | string[]
+  views?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -377,9 +485,14 @@ export type ProjectCreateManyInput = {
   clerkUserId: string
   title: string
   slug: string
+  tagline?: string | null
+  version?: string | null
   description: string
   demoUrl?: string | null
   repoUrl?: string | null
+  languages?: Prisma.ProjectCreatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectCreateframeworksInput | string[]
+  views?: number
   status?: $Enums.ProjectStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -390,9 +503,14 @@ export type ProjectUpdateManyMutationInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  tagline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   demoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  languages?: Prisma.ProjectUpdatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectUpdateframeworksInput | string[]
+  views?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -403,12 +521,25 @@ export type ProjectUncheckedUpdateManyInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  tagline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   demoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  languages?: Prisma.ProjectUpdatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectUpdateframeworksInput | string[]
+  views?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
 }
 
 export type ProjectCountOrderByAggregateInput = {
@@ -416,12 +547,21 @@ export type ProjectCountOrderByAggregateInput = {
   clerkUserId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   slug?: Prisma.SortOrder
+  tagline?: Prisma.SortOrder
+  version?: Prisma.SortOrder
   description?: Prisma.SortOrder
   demoUrl?: Prisma.SortOrder
   repoUrl?: Prisma.SortOrder
+  languages?: Prisma.SortOrder
+  frameworks?: Prisma.SortOrder
+  views?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type ProjectAvgOrderByAggregateInput = {
+  views?: Prisma.SortOrder
 }
 
 export type ProjectMaxOrderByAggregateInput = {
@@ -429,9 +569,12 @@ export type ProjectMaxOrderByAggregateInput = {
   clerkUserId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   slug?: Prisma.SortOrder
+  tagline?: Prisma.SortOrder
+  version?: Prisma.SortOrder
   description?: Prisma.SortOrder
   demoUrl?: Prisma.SortOrder
   repoUrl?: Prisma.SortOrder
+  views?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -442,17 +585,42 @@ export type ProjectMinOrderByAggregateInput = {
   clerkUserId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   slug?: Prisma.SortOrder
+  tagline?: Prisma.SortOrder
+  version?: Prisma.SortOrder
   description?: Prisma.SortOrder
   demoUrl?: Prisma.SortOrder
   repoUrl?: Prisma.SortOrder
+  views?: Prisma.SortOrder
   status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
+export type ProjectSumOrderByAggregateInput = {
+  views?: Prisma.SortOrder
+}
+
 export type ProjectScalarRelationFilter = {
   is?: Prisma.ProjectWhereInput
   isNot?: Prisma.ProjectWhereInput
+}
+
+export type ProjectCreatelanguagesInput = {
+  set: string[]
+}
+
+export type ProjectCreateframeworksInput = {
+  set: string[]
+}
+
+export type ProjectUpdatelanguagesInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type ProjectUpdateframeworksInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
 export type EnumProjectStatusFieldUpdateOperationsInput = {
@@ -534,9 +702,14 @@ export type ProjectCreateWithoutScreenshotsInput = {
   clerkUserId: string
   title: string
   slug: string
+  tagline?: string | null
+  version?: string | null
   description: string
   demoUrl?: string | null
   repoUrl?: string | null
+  languages?: Prisma.ProjectCreatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectCreateframeworksInput | string[]
+  views?: number
   status?: $Enums.ProjectStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -551,9 +724,14 @@ export type ProjectUncheckedCreateWithoutScreenshotsInput = {
   clerkUserId: string
   title: string
   slug: string
+  tagline?: string | null
+  version?: string | null
   description: string
   demoUrl?: string | null
   repoUrl?: string | null
+  languages?: Prisma.ProjectCreatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectCreateframeworksInput | string[]
+  views?: number
   status?: $Enums.ProjectStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -584,9 +762,14 @@ export type ProjectUpdateWithoutScreenshotsInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  tagline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   demoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  languages?: Prisma.ProjectUpdatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectUpdateframeworksInput | string[]
+  views?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -601,9 +784,14 @@ export type ProjectUncheckedUpdateWithoutScreenshotsInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  tagline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   demoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  languages?: Prisma.ProjectUpdatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectUpdateframeworksInput | string[]
+  views?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -618,9 +806,14 @@ export type ProjectCreateWithoutTagsInput = {
   clerkUserId: string
   title: string
   slug: string
+  tagline?: string | null
+  version?: string | null
   description: string
   demoUrl?: string | null
   repoUrl?: string | null
+  languages?: Prisma.ProjectCreatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectCreateframeworksInput | string[]
+  views?: number
   status?: $Enums.ProjectStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -635,9 +828,14 @@ export type ProjectUncheckedCreateWithoutTagsInput = {
   clerkUserId: string
   title: string
   slug: string
+  tagline?: string | null
+  version?: string | null
   description: string
   demoUrl?: string | null
   repoUrl?: string | null
+  languages?: Prisma.ProjectCreatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectCreateframeworksInput | string[]
+  views?: number
   status?: $Enums.ProjectStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -668,9 +866,14 @@ export type ProjectUpdateWithoutTagsInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  tagline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   demoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  languages?: Prisma.ProjectUpdatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectUpdateframeworksInput | string[]
+  views?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -685,9 +888,14 @@ export type ProjectUncheckedUpdateWithoutTagsInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  tagline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   demoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  languages?: Prisma.ProjectUpdatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectUpdateframeworksInput | string[]
+  views?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -702,9 +910,14 @@ export type ProjectCreateWithoutVotesInput = {
   clerkUserId: string
   title: string
   slug: string
+  tagline?: string | null
+  version?: string | null
   description: string
   demoUrl?: string | null
   repoUrl?: string | null
+  languages?: Prisma.ProjectCreatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectCreateframeworksInput | string[]
+  views?: number
   status?: $Enums.ProjectStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -719,9 +932,14 @@ export type ProjectUncheckedCreateWithoutVotesInput = {
   clerkUserId: string
   title: string
   slug: string
+  tagline?: string | null
+  version?: string | null
   description: string
   demoUrl?: string | null
   repoUrl?: string | null
+  languages?: Prisma.ProjectCreatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectCreateframeworksInput | string[]
+  views?: number
   status?: $Enums.ProjectStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -752,9 +970,14 @@ export type ProjectUpdateWithoutVotesInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  tagline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   demoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  languages?: Prisma.ProjectUpdatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectUpdateframeworksInput | string[]
+  views?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -769,9 +992,14 @@ export type ProjectUncheckedUpdateWithoutVotesInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  tagline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   demoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  languages?: Prisma.ProjectUpdatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectUpdateframeworksInput | string[]
+  views?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -786,9 +1014,14 @@ export type ProjectCreateWithoutCommentsInput = {
   clerkUserId: string
   title: string
   slug: string
+  tagline?: string | null
+  version?: string | null
   description: string
   demoUrl?: string | null
   repoUrl?: string | null
+  languages?: Prisma.ProjectCreatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectCreateframeworksInput | string[]
+  views?: number
   status?: $Enums.ProjectStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -803,9 +1036,14 @@ export type ProjectUncheckedCreateWithoutCommentsInput = {
   clerkUserId: string
   title: string
   slug: string
+  tagline?: string | null
+  version?: string | null
   description: string
   demoUrl?: string | null
   repoUrl?: string | null
+  languages?: Prisma.ProjectCreatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectCreateframeworksInput | string[]
+  views?: number
   status?: $Enums.ProjectStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -836,9 +1074,14 @@ export type ProjectUpdateWithoutCommentsInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  tagline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   demoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  languages?: Prisma.ProjectUpdatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectUpdateframeworksInput | string[]
+  views?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -853,9 +1096,14 @@ export type ProjectUncheckedUpdateWithoutCommentsInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  tagline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   demoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  languages?: Prisma.ProjectUpdatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectUpdateframeworksInput | string[]
+  views?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -870,9 +1118,14 @@ export type ProjectCreateWithoutAiAnalysisInput = {
   clerkUserId: string
   title: string
   slug: string
+  tagline?: string | null
+  version?: string | null
   description: string
   demoUrl?: string | null
   repoUrl?: string | null
+  languages?: Prisma.ProjectCreatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectCreateframeworksInput | string[]
+  views?: number
   status?: $Enums.ProjectStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -887,9 +1140,14 @@ export type ProjectUncheckedCreateWithoutAiAnalysisInput = {
   clerkUserId: string
   title: string
   slug: string
+  tagline?: string | null
+  version?: string | null
   description: string
   demoUrl?: string | null
   repoUrl?: string | null
+  languages?: Prisma.ProjectCreatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectCreateframeworksInput | string[]
+  views?: number
   status?: $Enums.ProjectStatus
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -920,9 +1178,14 @@ export type ProjectUpdateWithoutAiAnalysisInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  tagline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   demoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  languages?: Prisma.ProjectUpdatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectUpdateframeworksInput | string[]
+  views?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -937,9 +1200,14 @@ export type ProjectUncheckedUpdateWithoutAiAnalysisInput = {
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
+  tagline?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  version?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.StringFieldUpdateOperationsInput | string
   demoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   repoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  languages?: Prisma.ProjectUpdatelanguagesInput | string[]
+  frameworks?: Prisma.ProjectUpdateframeworksInput | string[]
+  views?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1012,9 +1280,14 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   clerkUserId?: boolean
   title?: boolean
   slug?: boolean
+  tagline?: boolean
+  version?: boolean
   description?: boolean
   demoUrl?: boolean
   repoUrl?: boolean
+  languages?: boolean
+  frameworks?: boolean
+  views?: boolean
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1031,9 +1304,14 @@ export type ProjectSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   clerkUserId?: boolean
   title?: boolean
   slug?: boolean
+  tagline?: boolean
+  version?: boolean
   description?: boolean
   demoUrl?: boolean
   repoUrl?: boolean
+  languages?: boolean
+  frameworks?: boolean
+  views?: boolean
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1044,9 +1322,14 @@ export type ProjectSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   clerkUserId?: boolean
   title?: boolean
   slug?: boolean
+  tagline?: boolean
+  version?: boolean
   description?: boolean
   demoUrl?: boolean
   repoUrl?: boolean
+  languages?: boolean
+  frameworks?: boolean
+  views?: boolean
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1057,15 +1340,20 @@ export type ProjectSelectScalar = {
   clerkUserId?: boolean
   title?: boolean
   slug?: boolean
+  tagline?: boolean
+  version?: boolean
   description?: boolean
   demoUrl?: boolean
   repoUrl?: boolean
+  languages?: boolean
+  frameworks?: boolean
+  views?: boolean
   status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkUserId" | "title" | "slug" | "description" | "demoUrl" | "repoUrl" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
+export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkUserId" | "title" | "slug" | "tagline" | "version" | "description" | "demoUrl" | "repoUrl" | "languages" | "frameworks" | "views" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
 export type ProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   screenshots?: boolean | Prisma.Project$screenshotsArgs<ExtArgs>
   tags?: boolean | Prisma.Project$tagsArgs<ExtArgs>
@@ -1091,9 +1379,14 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     clerkUserId: string
     title: string
     slug: string
+    tagline: string | null
+    version: string | null
     description: string
     demoUrl: string | null
     repoUrl: string | null
+    languages: string[]
+    frameworks: string[]
+    views: number
     status: $Enums.ProjectStatus
     createdAt: Date
     updatedAt: Date
@@ -1529,9 +1822,14 @@ export interface ProjectFieldRefs {
   readonly clerkUserId: Prisma.FieldRef<"Project", 'String'>
   readonly title: Prisma.FieldRef<"Project", 'String'>
   readonly slug: Prisma.FieldRef<"Project", 'String'>
+  readonly tagline: Prisma.FieldRef<"Project", 'String'>
+  readonly version: Prisma.FieldRef<"Project", 'String'>
   readonly description: Prisma.FieldRef<"Project", 'String'>
   readonly demoUrl: Prisma.FieldRef<"Project", 'String'>
   readonly repoUrl: Prisma.FieldRef<"Project", 'String'>
+  readonly languages: Prisma.FieldRef<"Project", 'String[]'>
+  readonly frameworks: Prisma.FieldRef<"Project", 'String[]'>
+  readonly views: Prisma.FieldRef<"Project", 'Int'>
   readonly status: Prisma.FieldRef<"Project", 'ProjectStatus'>
   readonly createdAt: Prisma.FieldRef<"Project", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Project", 'DateTime'>

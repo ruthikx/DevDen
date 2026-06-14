@@ -16,10 +16,10 @@ export default async function SubmitProjectPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="container mx-auto space-y-8 px-4 py-8">
       <GradientHeader
-        title="Share Your Project"
-        subtitle="Tell the community about your amazing developer project and get feedback from other developers."
+        title="Project Launchpad"
+        subtitle="Initialize your project profile, add showcase assets, connect your repository, and prepare the launch for community review."
       />
 
       <div className="flex justify-center">

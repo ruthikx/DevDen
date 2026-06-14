@@ -1,6 +1,5 @@
 import {
   Bug,
-  CatIcon,
   Lightbulb,
   Palette,
   Sparkle,

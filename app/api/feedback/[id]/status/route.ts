@@ -1,10 +1,9 @@
 import { STATUS_ORDER } from "@/app/data/status-data";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { error } from "console";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function PATCH(request: NextRequest, {params}:{params:Promise<{id: number}>}){
+export async function PATCH(request: NextRequest, {params}:{params:Promise<{id: string}>}){
     try{
         const {userId} = await auth();
 

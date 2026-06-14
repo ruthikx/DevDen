@@ -1,24 +1,20 @@
-import { Heart } from "lucide-react";
+import { HeartPulse } from "lucide-react";
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
     return (
-        <footer className="border-t bg-background mt-auto">
-            <div className="container mx-auto py-5 px-4">
-                
-                <div className="flex flex-row md:flex-row items-center justify-between gap-4">
+        <footer className="mt-auto border-t border-white/10 bg-[#131313]/80">
+            <div className="container mx-auto px-4 py-5">
+                <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <span>
-                            Made with
-                        </span>
-                        <Heart className="h-4 w-4 text-red-500 fill-red-500" />
-                        <span>by Ruthik</span>
+                        <span>Code meets craft on</span>
+                        <HeartPulse className="h-4 w-4 text-[#ff007a]" />
+                        <span>DevPulse</span>
                     </div>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <span>© {currentYear} Feedback Fusion. All rights reserved.</span>
+                        <span>Copyright {currentYear} DevPulse. All rights reserved.</span>
                     </div>
                 </div>
-                
             </div>
         </footer>
     );

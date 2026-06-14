@@ -8,15 +8,28 @@ import { getCategoryDesign } from "@/app/data/category-data";
 import { Button } from "./ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
-import { title } from "process";
-import { error } from "console";
 
+type FeedbackVote = {
+    userId: number | string;
+};
+
+type FeedbackPost = {
+    id: number;
+    title: string;
+    description: string | null;
+    category: string;
+    status: string;
+    createdAt: Date | string;
+    author: { name: string | null };
+    votes: FeedbackVote[];
+    _count?: { votes: number };
+};
 
 export default function FeedbackList({
     initialPosts,
     userId,
 }: {
-    initialPosts: any[];
+    initialPosts: FeedbackPost[];
     userId: string | null;
 }){
     const [posts,setPosts] = useState(initialPosts);
@@ -60,7 +73,7 @@ export default function FeedbackList({
                             ...post,
                             votes: data.voted 
                                 ? [...post.votes, {userId}] 
-                                : post.votes.filter((v:any) => v.userId !== userId),
+                                : post.votes.filter((v) => v.userId !== userId),
                             _count:{
                                 votes: data.voted ? voteCount + 1 : voteCount -1
                             },
@@ -132,7 +145,7 @@ export default function FeedbackList({
                         <p className="text-muted-foreground mb-3">{post.description}</p>
                             <div className="flex items-center justify-between">
                                 <Button variant="outline" size="sm" onClick={() => handleVote(post.id)} className="gap-2">
-                                    <ThumbsUp className={`h-4 w-4 ${post.votes.some((v:any)=> v.userId === userId)
+                                    <ThumbsUp className={`h-4 w-4 ${post.votes.some((v)=> v.userId === userId)
                                         ? "fill-current" : ""
                                     }`}/>
                                     {post.votes.length} Votes

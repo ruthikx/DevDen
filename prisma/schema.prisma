@@ -16,6 +16,7 @@ model User {
   email         String  @unique
   name          String?
   image         String
+  pulseScore    Float   @default(0)
   posts         Post[]
   votes         Vote[]
   role          Role @default(user)
@@ -67,9 +68,14 @@ model Project {
   clerkUserId String
   title       String
   slug        String       @unique
+  tagline     String?
+  version     String?
   description String       @db.Text
   demoUrl     String?
   repoUrl     String?
+  languages   String[]
+  frameworks  String[]
+  views       Int          @default(0)
   status      ProjectStatus @default(ACTIVE)
   screenshots Screenshot[]
   tags        ProjectTag[]
@@ -79,6 +85,9 @@ model Project {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
+  @@index([createdAt])
+  @@index([views])
+  @@index([clerkUserId])
   @@map("projects")
 }
 
