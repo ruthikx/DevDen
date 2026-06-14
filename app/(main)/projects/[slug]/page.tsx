@@ -1,13 +1,10 @@
 import { getProjectBySlug } from '@/app/actions/projects';
-import { CommentThread } from '@/components/CommentThread';
-import { ProjectDetail } from '@/components/ProjectDetail';
-import { TechStackHUD } from '@/components/TechStackHUD';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { ProjectDetailClient } from '@/components/ProjectDetailClient';
 import { notFound } from 'next/navigation';
+import { auth } from '@clerk/nextjs/server';
 
 type ProjectDetailData = {
+  id: string;
   title: string;
   tagline?: string | null;
   version?: string | null;
@@ -23,7 +20,12 @@ type ProjectDetailData = {
   languages: string[];
   frameworks: string[];
   screenshots: { id: string; url: string }[];
-  comments: { id: string; body: string; type: 'GENERAL' | 'FEATURE_REQUEST' | 'BUG_REPORT'; createdAt: Date }[];
+  comments: {
+    id: string;
+    body: string;
+    type: 'GENERAL' | 'FEATURE_REQUEST' | 'BUG_REPORT';
+    createdAt: Date;
+  }[];
   aiAnalysis?: {
     sentiment: string;
     topIssues: string[];
@@ -44,45 +46,17 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
     notFound();
   }
 
-  const project = result.project as ProjectDetailData;
+  const project = result.project as unknown as ProjectDetailData & {
+    votes: { clerkUserId: string; value: number }[];
+  };
+  const { userId } = await auth();
+
+  // Check if the current user has upvoted
+  const hasVoted = project.votes ? project.votes.some(
+    (v) => v.clerkUserId === userId
+  ) : false;
 
   return (
-    <div className="container mx-auto space-y-8 px-4 py-8">
-      <Button asChild variant="ghost" className="text-zinc-300 hover:bg-white/5 hover:text-white">
-        <Link href="/projects">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Trending
-        </Link>
-      </Button>
-
-      <ProjectDetail project={project} />
-
-      <section className="grid gap-6 lg:grid-cols-[1fr_22rem]">
-        <CommentThread comments={project.comments} />
-
-        <div className="space-y-6">
-          <TechStackHUD tags={project.tags} languages={project.languages} frameworks={project.frameworks} />
-
-          <div className="neon-panel rounded-lg p-5">
-            <h2 className="mb-4 font-semibold">AI Analysis</h2>
-            {project.aiAnalysis ? (
-              <div className="space-y-4 text-sm text-zinc-300">
-                <p>{project.aiAnalysis.summary}</p>
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.22em] text-cyan-300">Top Issues</p>
-                  <ul className="space-y-2">
-                    {project.aiAnalysis.topIssues.map((issue) => (
-                      <li key={issue} className="rounded-md bg-white/5 px-3 py-2">{issue}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            ) : (
-              <p className="text-sm leading-6 text-zinc-500">AI sentiment, issue clustering, and feature-request summaries will activate as community feedback accumulates.</p>
-            )}
-          </div>
-        </div>
-      </section>
-    </div>
+    <ProjectDetailClient project={project} initialHasVoted={hasVoted} />
   );
 }

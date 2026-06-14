@@ -351,3 +351,100 @@ export async function getAllTags() {
     return { success: false, error: 'Failed to fetch tags', tags: [] };
   }
 }
+
+export async function addComment(
+  projectId: string,
+  body: string,
+  type: 'GENERAL' | 'FEATURE_REQUEST' | 'BUG_REPORT'
+) {
+  try {
+    const user = await syncCurrentUser();
+    if (!user) {
+      throw new Error('Not authenticated');
+    }
+
+    if (!body.trim()) {
+      throw new Error('Comment body is required');
+    }
+
+    const comment = await prisma.comment.create({
+      data: {
+        clerkUserId: user.clerkUserId,
+        projectId,
+        body: body.trim(),
+        type,
+      },
+    });
+
+    // Find the project slug to revalidate
+    const project = await prisma.project.findUnique({
+      where: { id: projectId },
+      select: { slug: true },
+    });
+
+    if (project) {
+      revalidatePath(`/projects/${project.slug}`);
+      revalidatePath('/projects');
+      revalidatePath('/leaderboards');
+    }
+
+    return { success: true, comment };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to add comment';
+    console.error('Error adding comment:', error);
+    return { success: false, error: message };
+  }
+}
+
+export async function toggleProjectVote(projectId: string) {
+  try {
+    const user = await syncCurrentUser();
+    if (!user) {
+      throw new Error('Not authenticated');
+    }
+
+    const existingVote = await prisma.vote_Project.findUnique({
+      where: {
+        clerkUserId_projectId: {
+          clerkUserId: user.clerkUserId,
+          projectId,
+        },
+      },
+    });
+
+    let voted = false;
+    if (existingVote) {
+      await prisma.vote_Project.delete({
+        where: { id: existingVote.id },
+      });
+      voted = false;
+    } else {
+      await prisma.vote_Project.create({
+        data: {
+          clerkUserId: user.clerkUserId,
+          projectId,
+          value: 1,
+        },
+      });
+      voted = true;
+    }
+
+    const project = await prisma.project.findUnique({
+      where: { id: projectId },
+      select: { slug: true },
+    });
+
+    if (project) {
+      revalidatePath(`/projects/${project.slug}`);
+      revalidatePath('/projects');
+      revalidatePath('/leaderboards');
+    }
+
+    return { success: true, voted };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to toggle vote';
+    console.error('Error toggling project vote:', error);
+    return { success: false, error: message };
+  }
+}
+
