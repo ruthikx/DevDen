@@ -89,7 +89,7 @@ export function ProjectDetailClient({ project, initialHasVoted }: ProjectDetailC
         setVoteCount(prev => previousVoted ? prev + 1 : prev - 1);
         toast.error(result.error || 'Failed to register vote');
       } else {
-        setHasVoted(result.voted);
+        setHasVoted(result.voted ?? false);
         toast.success(result.voted ? 'Upvoted project!' : 'Removed upvote');
         router.refresh();
       }
