@@ -1,8 +1,8 @@
-# DevPulse 🚀
+# DevDen 🚀
 
 **A social platform where developers showcase their projects and get real feedback from the community.**
 
-DevPulse (repo: `DevDen`) lets developers publish their work, gather upvotes and downvotes, receive structured feedback, and build a following — all in one place.
+DevDen lets developers publish their work, gather upvotes and downvotes, receive structured feedback, and build a following — all in one place.
 
 ---
 
